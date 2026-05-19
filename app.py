@@ -24,56 +24,119 @@ st.markdown(
     """
     <style>
 
+    /* MAIN APP */
     .stApp {
-        background: linear-gradient(to bottom right, #0f172a, #111827);
+        background:
+            linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)),
+            url("https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2070&auto=format&fit=crop");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
     }
 
+    /* REMOVE STREAMLIT GRAY BACKGROUND */
+    section[data-testid="stSidebar"] {
+        background: transparent;
+    }
+
+    .main .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(10px);
+        border-radius: 25px;
+        padding: 35px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* TITLE */
     h1 {
         color: white;
         text-align: center;
-        font-size: 52px;
-        font-weight: bold;
+        font-size: 58px;
+        font-weight: 800;
+        letter-spacing: 1px;
     }
 
     h3 {
-        color: #cbd5e1;
+        color: #e2e8f0;
         text-align: center;
+        font-weight: 400;
     }
 
-    .block-container {
-        padding-top: 2rem;
-    }
-
-    .stButton>button {
-        width: 100%;
-        background: linear-gradient(to right, #2563eb, #3b82f6);
-        color: white;
-        border-radius: 12px;
-        height: 55px;
-        font-size: 18px;
-        border: none;
-        font-weight: bold;
-    }
-
-    .prediction-box {
-        padding: 25px;
-        background: #1e293b;
-        border-radius: 15px;
-        text-align: center;
-        color: white;
-        font-size: 32px;
-        margin-top: 25px;
-        border: 1px solid #334155;
-    }
-
+    /* LABELS */
     label {
         color: white !important;
-        font-weight: 500;
+        font-weight: 600 !important;
+        font-size: 15px !important;
     }
 
-    .stSelectbox, .stNumberInput, .stTextInput {
-        background-color: #111827;
-        border-radius: 10px;
+    /* INPUTS */
+    div[data-baseweb="select"],
+    div[data-baseweb="input"],
+    .stNumberInput,
+    .stSelectbox {
+        background: transparent !important;
+    }
+
+    .stSelectbox > div,
+    .stNumberInput > div > div,
+    .stTextInput > div > div {
+        background-color: rgba(255,255,255,0.08) !important;
+        color: white !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(255,255,255,0.15) !important;
+    }
+
+    input, textarea {
+        color: white !important;
+    }
+
+    /* DROPDOWN TEXT */
+    .stSelectbox div[data-baseweb="select"] * {
+        color: white !important;
+    }
+
+    /* BUTTON */
+    .stButton > button {
+        width: 100%;
+        background: linear-gradient(to right, #2563eb, #60a5fa);
+        color: white;
+        border-radius: 14px;
+        height: 58px;
+        font-size: 19px;
+        border: none;
+        font-weight: bold;
+        transition: 0.3s ease;
+    }
+
+    .stButton > button:hover {
+        transform: scale(1.02);
+        background: linear-gradient(to right, #1d4ed8, #3b82f6);
+    }
+
+    /* PREDICTION BOX */
+    .prediction-box {
+        padding: 30px;
+        background: rgba(15, 23, 42, 0.75);
+        border-radius: 20px;
+        text-align: center;
+        color: white;
+        font-size: 34px;
+        margin-top: 30px;
+        border: 1px solid rgba(255,255,255,0.1);
+        backdrop-filter: blur(12px);
+        box-shadow: 0px 8px 30px rgba(0,0,0,0.4);
+    }
+
+    /* REMOVE STREAMLIT HEADER */
+    header {
+        visibility: hidden;
+    }
+
+    /* REMOVE FOOTER */
+    footer {
+        visibility: hidden;
     }
 
     </style>
@@ -85,6 +148,7 @@ st.markdown(
 # HEADER
 # ----------------------------
 st.markdown("<h1>🚘 DriveValuenG</h1>", unsafe_allow_html=True)
+
 st.markdown(
     "<h3>Smart Nigerian Car Price Prediction System</h3>",
     unsafe_allow_html=True
@@ -95,7 +159,6 @@ st.write("")
 # ----------------------------
 # CAR DATA
 # ----------------------------
-
 car_brands = {
     "Toyota": [
         "Camry", "Corolla", "Highlander",
@@ -245,5 +308,17 @@ if submit_button:
 # ----------------------------
 # FOOTER
 # ----------------------------
-st.write("")
-st.caption("DrivenG • AI Powered Nigerian Car Valuation")
+st.markdown(
+    """
+    <div style='
+        text-align: center;
+        color: rgba(255,255,255,0.7);
+        padding-top: 25px;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+    '>
+        🚘 DrivenG • AI Powered Nigerian Car Valuation
+    </div>
+    """,
+    unsafe_allow_html=True
+)
