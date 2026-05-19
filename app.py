@@ -222,4 +222,3 @@ with st.form("prediction_form"):
 
     submit_button = st.form_submit_button("🚀 Predict Car Price")
     unsafe_allow_html=True
-)
