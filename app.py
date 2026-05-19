@@ -134,7 +134,7 @@ with st.form("prediction_form"):
     year = st.select_slider(
         "Select Car Year",
         options=list(range(1990, current_year + 1)),
-        value=2015
+        value=2021
     )
 
     col5, col6 = st.columns(2)
@@ -145,7 +145,7 @@ with st.form("prediction_form"):
     with col6:
         engine_size = st.number_input("Engine Size", 0.8, 8.0, value=2.0, step=0.1)
 
-    condition = st.selectbox("Condition", ["Foreign Used", "Nigerian Used", "Brand New"])
+    condition = st.selectbox("Condition", ["Foreign Used", "Nigerian Used"])
 
     submit_button = st.form_submit_button("🚀 Predict Car Price")
 
