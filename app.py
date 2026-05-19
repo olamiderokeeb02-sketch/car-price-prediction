@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 from datetime import datetime
+import numpy as np
 
 # ----------------------------
 # PAGE CONFIG
@@ -29,97 +30,65 @@ car_brands = {
     "Hyundai": ["Elantra", "Sonata", "Tucson"]
 }
 
-# ----------------------------
-# FLATTEN ALL MODELS (IMPORTANT FIX)
-# ----------------------------
-all_models = sorted(list(set([model for models in car_brands.values() for model in models])))
+all_models = sorted(set([m for models in car_brands.values() for m in models]))
+
+# Luxury list (MUST match training)
+luxury_brands = ["Lexus", "Mercedes-Benz", "BMW"]
 
 # ----------------------------
 # STYLING
 # ----------------------------
-st.markdown(
-    """
-    <style>
+st.markdown("""
+<style>
 
-    .stApp {
-        background:
-            linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
-            url("https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2070&auto=format&fit=crop");
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-    }
+.stApp {
+    background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+    url("https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2070&auto=format&fit=crop");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
 
-    .main .block-container {
-        padding: 35px;
-        background: rgba(15, 23, 42, 0.45);
-        border-radius: 25px;
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255,255,255,0.1);
-    }
+.main .block-container {
+    padding: 35px;
+    background: rgba(15, 23, 42, 0.45);
+    border-radius: 25px;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1);
+}
 
-    header, footer {
-        visibility: hidden;
-    }
+h1 {
+    text-align: center;
+    font-size: 62px;
+    font-weight: 900;
+    background: linear-gradient(to right, #ffffff, #dbeafe, #93c5fd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
-    /* MAIN TITLE */
-    h1 {
-        text-align: center;
-        font-size: 62px;
-        font-weight: 900;
-        background: linear-gradient(to right, #ffffff, #dbeafe, #93c5fd);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
+.subtitle {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 800;
+    margin-top: -10px;
+    background: linear-gradient(to right, #ffffff, #dbeafe, #93c5fd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
-    /* SUB TITLE (same style as main but smaller tweak) */
-    .subtitle {
-        text-align: center;
-        font-size: 28px;
-        font-weight: 800;
-        margin-top: -10px;
+label { color: white !important; font-weight: 600 !important; }
 
-        background: linear-gradient(to right, #ffffff, #dbeafe, #93c5fd);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    label {
-        color: white !important;
-        font-weight: 600 !important;
-    }
-
-    .stButton > button {
-        width: 100%;
-        background: rgba(255,255,255,0.08);
-        color: white;
-        border-radius: 14px;
-        height: 58px;
-        font-size: 19px;
-        border: 1px solid rgba(255,255,255,0.18);
-        font-weight: bold;
-    }
-
-    .stButton > button:hover {
-        background: rgba(255,255,255,0.15);
-        transform: scale(1.02);
-    }
-
-    .prediction-box {
-        padding: 30px;
-        background: rgba(15, 23, 42, 0.75);
-        border-radius: 20px;
-        text-align: center;
-        color: white;
-        font-size: 34px;
-        margin-top: 30px;
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+.prediction-box {
+    padding: 30px;
+    background: rgba(15, 23, 42, 0.75);
+    border-radius: 20px;
+    text-align: center;
+    color: white;
+    font-size: 34px;
+    margin-top: 30px;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ----------------------------
 # HEADER
@@ -135,17 +104,10 @@ with st.form("prediction_form"):
     col1, col2 = st.columns(2)
 
     with col1:
-        make = st.selectbox(
-            "Car Make",
-            list(car_brands.keys())
-        )
+        make = st.selectbox("Car Make", list(car_brands.keys()))
 
-    # ✅ FIX: ALL MODELS (NO DEPENDENCY)
     with col2:
-        model_name = st.selectbox(
-            "Car Model",
-            all_models
-        )
+        model_name = st.selectbox("Car Model", all_models)
 
     col3, col4 = st.columns(2)
 
@@ -172,8 +134,6 @@ with st.form("prediction_form"):
         engine_size = st.number_input("Engine Size", 0.8, 8.0, value=2.0, step=0.1)
 
     condition = st.selectbox("Condition", ["Foreign Used", "Nigerian Used", "Brand New"])
-    selling_condition = st.selectbox("Selling Condition", ["Clean", "Accidented", "Refurbished"])
-    bought_condition = st.selectbox("Bought Condition", ["New", "Used"])
 
     submit_button = st.form_submit_button("🚀 Predict Car Price")
 
@@ -184,6 +144,13 @@ if submit_button:
 
     car_age = current_year - year
 
+    # ----------------------------
+    # ENGINEER FEATURES (MUST MATCH TRAINING)
+    # ----------------------------
+    mileage_per_year = mileage / (car_age + 1)
+    log_mileage = np.log1p(mileage)
+    is_luxury = 1 if make in luxury_brands else 0
+
     input_data = pd.DataFrame({
         "Make": [make],
         "Model": [model_name],
@@ -192,9 +159,10 @@ if submit_button:
         "Condition": [condition],
         "Mileage": [mileage],
         "Engine Size": [engine_size],
-        "Selling Condition": [selling_condition],
-        "Bought Condition": [bought_condition],
-        "Car Age": [car_age]
+        "Car Age": [car_age],
+        "Mileage_per_year": [mileage_per_year],
+        "Log_Mileage": [log_mileage],
+        "Is_Luxury": [is_luxury]
     })
 
     try:
