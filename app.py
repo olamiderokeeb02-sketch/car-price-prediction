@@ -30,15 +30,6 @@ car_brands = {
 }
 
 # ----------------------------
-# SESSION STATE (FIXED DEPENDENCY)
-# ----------------------------
-if "make" not in st.session_state:
-    st.session_state.make = "Toyota"
-
-if "model_name" not in st.session_state:
-    st.session_state.model_name = car_brands["Toyota"][0]
-
-# ----------------------------
 # CUSTOM STYLING
 # ----------------------------
 st.markdown(
@@ -152,18 +143,17 @@ with st.form("prediction_form"):
 
     col1, col2 = st.columns(2)
 
+    # ✅ FIXED DEPENDENCY (THIS IS THE IMPORTANT PART)
     with col1:
         make = st.selectbox(
             "Car Make",
-            list(car_brands.keys()),
-            key="make"
+            list(car_brands.keys())
         )
 
     with col2:
         model_name = st.selectbox(
             "Car Model",
-            car_brands[st.session_state.make],
-            key="model_name"
+            car_brands[make]   # 👈 THIS FIXES THE ISSUE
         )
 
     col3, col4 = st.columns(2)
@@ -225,6 +215,8 @@ if submit_button:
             ₦{prediction:,.0f}
         </div>
         """, unsafe_allow_html=True)
+
+        st.balloons()
 
     except Exception as e:
         st.error(f"Prediction Error: {e}")
