@@ -30,7 +30,12 @@ car_brands = {
 }
 
 # ----------------------------
-# PAGE STYLING
+# FLATTEN ALL MODELS (IMPORTANT FIX)
+# ----------------------------
+all_models = sorted(list(set([model for models in car_brands.values() for model in models])))
+
+# ----------------------------
+# STYLING
 # ----------------------------
 st.markdown(
     """
@@ -57,6 +62,7 @@ st.markdown(
         visibility: hidden;
     }
 
+    /* MAIN TITLE */
     h1 {
         text-align: center;
         font-size: 62px;
@@ -66,11 +72,16 @@ st.markdown(
         -webkit-text-fill-color: transparent;
     }
 
-    h3 {
+    /* SUB TITLE (same style as main but smaller tweak) */
+    .subtitle {
         text-align: center;
-        font-size: 18px;
-        font-weight: 400;
-        color: #cbd5e1;
+        font-size: 28px;
+        font-weight: 800;
+        margin-top: -10px;
+
+        background: linear-gradient(to right, #ffffff, #dbeafe, #93c5fd);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 
     label {
@@ -114,7 +125,7 @@ st.markdown(
 # HEADER
 # ----------------------------
 st.markdown("<h1>🚘 DriveValuenG</h1>", unsafe_allow_html=True)
-st.markdown("<h3>Smart Nigerian Car Price Prediction System</h3>", unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Smart Nigerian Car Price Prediction System</div>', unsafe_allow_html=True)
 
 # ----------------------------
 # FORM
@@ -123,18 +134,17 @@ with st.form("prediction_form"):
 
     col1, col2 = st.columns(2)
 
-    # Car Make
     with col1:
         make = st.selectbox(
             "Car Make",
             list(car_brands.keys())
         )
 
-    # Car Model (DEPENDS ON MAKE)
+    # ✅ FIX: ALL MODELS (NO DEPENDENCY)
     with col2:
         model_name = st.selectbox(
             "Car Model",
-            car_brands[make]
+            all_models
         )
 
     col3, col4 = st.columns(2)
@@ -199,21 +209,3 @@ if submit_button:
 
     except Exception as e:
         st.error(f"Prediction Error: {e}")
-
-# ----------------------------
-# FOOTER
-# ----------------------------
-st.markdown(
-    """
-    <div style='
-        text-align: center;
-        color: rgba(255,255,255,0.7);
-        padding-top: 25px;
-        font-size: 14px;
-        letter-spacing: 0.5px;
-    '>
-        🚘 DrivenG • AI Powered Nigerian Car Valuation
-    </div>
-    """,
-    unsafe_allow_html=True
-)
