@@ -18,13 +18,33 @@ st.set_page_config(
 model = joblib.load("car_model.joblib")
 
 # ----------------------------
+# CAR DATA
+# ----------------------------
+car_brands = {
+    "Toyota": ["Camry", "Corolla", "Highlander", "RAV4", "Avalon", "Venza"],
+    "Honda": ["Accord", "Civic", "Pilot", "CR-V"],
+    "Lexus": ["ES350", "RX350", "GX460", "LX570"],
+    "Mercedes-Benz": ["C300", "E350", "GLK350", "ML350"],
+    "BMW": ["X5", "3 Series", "5 Series"],
+    "Hyundai": ["Elantra", "Sonata", "Tucson"]
+}
+
+# ----------------------------
+# PAGE STATE FIX
+# ----------------------------
+if "model_name" not in st.session_state:
+    st.session_state.model_name = car_brands["Toyota"][0]
+
+def update_make():
+    st.session_state.model_name = car_brands[st.session_state.make][0]
+
+# ----------------------------
 # CUSTOM STYLING
 # ----------------------------
 st.markdown(
     """
     <style>
 
-    /* BACKGROUND */
     .stApp {
         background:
             linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
@@ -34,100 +54,49 @@ st.markdown(
         background-attachment: fixed;
     }
 
-    /* MAIN CONTAINER */
     .main .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-        background: rgba(15, 23, 42, 0.45);
-        backdrop-filter: blur(12px);
-        border-radius: 25px;
         padding: 35px;
+        background: rgba(15, 23, 42, 0.45);
+        border-radius: 25px;
+        backdrop-filter: blur(12px);
         border: 1px solid rgba(255,255,255,0.1);
     }
 
-    /* REMOVE STREAMLIT DEFAULT UI */
     header, footer {
         visibility: hidden;
     }
 
-    section[data-testid="stSidebar"] {
-        background: transparent;
-    }
-
-    /* =========================
-       TITLE (GRADIENT)
-    ========================== */
+    /* TITLE */
     h1 {
         text-align: center;
         font-size: 62px;
         font-weight: 900;
-        letter-spacing: 1px;
 
-        background: linear-gradient(
-            to right,
-            #ffffff,
-            #dbeafe,
-            #93c5fd
-        );
-
+        background: linear-gradient(to right, #ffffff, #dbeafe, #93c5fd);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
 
-        text-shadow:
-            0px 0px 20px rgba(147,197,253,0.35),
-            0px 4px 20px rgba(0,0,0,0.8);
+        text-shadow: 0px 0px 20px rgba(147,197,253,0.35);
     }
 
-    /* =========================
-       SUBTITLE (GRADIENT)
-    ========================== */
+    /* SUBTITLE */
     h3 {
         text-align: center;
         font-size: 18px;
         font-weight: 400;
 
-        background: linear-gradient(
-            to right,
-            #e2e8f0,
-            #93c5fd
-        );
-
+        background: linear-gradient(to right, #e2e8f0, #93c5fd);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-
-        text-shadow: 0px 2px 10px rgba(0,0,0,0.7);
     }
 
-    /* LABELS */
     label {
         color: white !important;
         font-weight: 600 !important;
-        font-size: 15px !important;
     }
 
     /* INPUTS */
-    .stSelectbox,
-    .stNumberInput,
-    .stTextInput,
-    .stDateInput,
-    .stMultiSelect {
-        background: transparent !important;
-    }
-
-    /* SELECTBOX */
-    div[data-baseweb="select"] > div {
-        background: rgba(255,255,255,0.08) !important;
-        border: 1px solid rgba(255,255,255,0.15) !important;
-        border-radius: 14px !important;
-        color: white !important;
-        backdrop-filter: blur(10px);
-    }
-
-    div[data-baseweb="select"] * {
-        color: white !important;
-    }
-
-    /* NUMBER INPUT */
+    .stSelectbox > div > div,
     .stNumberInput > div > div > input {
         background: rgba(255,255,255,0.08) !important;
         color: white !important;
@@ -146,7 +115,6 @@ st.markdown(
         border: 1px solid rgba(255,255,255,0.18);
         font-weight: bold;
         backdrop-filter: blur(10px);
-        transition: all 0.3s ease;
     }
 
     .stButton > button:hover {
@@ -154,7 +122,7 @@ st.markdown(
         transform: scale(1.02);
     }
 
-    /* PREDICTION BOX */
+    /* RESULT BOX */
     .prediction-box {
         padding: 30px;
         background: rgba(15, 23, 42, 0.75);
@@ -164,7 +132,6 @@ st.markdown(
         font-size: 34px;
         margin-top: 30px;
         border: 1px solid rgba(255,255,255,0.1);
-        backdrop-filter: blur(12px);
     }
 
     </style>
@@ -176,23 +143,7 @@ st.markdown(
 # HEADER
 # ----------------------------
 st.markdown("<h1>🚘 DriveValuenG</h1>", unsafe_allow_html=True)
-
-st.markdown(
-    "<h3>Smart Nigerian Car Price Prediction System</h3>",
-    unsafe_allow_html=True
-)
-
-# ----------------------------
-# CAR DATA
-# ----------------------------
-car_brands = {
-    "Toyota": ["Camry", "Corolla", "Highlander", "RAV4", "Avalon", "Venza"],
-    "Honda": ["Accord", "Civic", "Pilot", "CR-V"],
-    "Lexus": ["ES350", "RX350", "GX460", "LX570"],
-    "Mercedes-Benz": ["C300", "E350", "GLK350", "ML350"],
-    "BMW": ["X5", "3 Series", "5 Series"],
-    "Hyundai": ["Elantra", "Sonata", "Tucson"]
-}
+st.markdown("<h3>Smart Nigerian Car Price Prediction System</h3>", unsafe_allow_html=True)
 
 # ----------------------------
 # FORM
@@ -202,10 +153,19 @@ with st.form("prediction_form"):
     col1, col2 = st.columns(2)
 
     with col1:
-        make = st.selectbox("Car Make", list(car_brands.keys()))
+        make = st.selectbox(
+            "Car Make",
+            list(car_brands.keys()),
+            key="make",
+            on_change=update_make
+        )
 
     with col2:
-        model_name = st.selectbox("Car Model", car_brands[make])
+        model_name = st.selectbox(
+            "Car Model",
+            car_brands[make],
+            key="model_name"
+        )
 
     col3, col4 = st.columns(2)
 
