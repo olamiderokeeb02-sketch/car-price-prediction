@@ -32,8 +32,19 @@ car_brands = {
 
 all_models = sorted(set([m for models in car_brands.values() for m in models]))
 
-# Luxury list (MUST match training)
+# ----------------------------
+# FEATURE MAPS (MUST MATCH TRAINING)
+# ----------------------------
 luxury_brands = ["Lexus", "Mercedes-Benz", "BMW"]
+
+brand_score_map = {
+    "Toyota": 5,
+    "Honda": 5,
+    "Lexus": 5,
+    "BMW": 3,
+    "Mercedes-Benz": 3,
+    "Hyundai": 4
+}
 
 # ----------------------------
 # STYLING
@@ -87,6 +98,7 @@ label { color: white !important; font-weight: 600 !important; }
     font-size: 34px;
     margin-top: 30px;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -142,14 +154,14 @@ with st.form("prediction_form"):
 # ----------------------------
 if submit_button:
 
+    # ----------------------------
+    # FEATURE ENGINEERING (MATCH TRAINING)
+    # ----------------------------
     car_age = current_year - year
-
-    # ----------------------------
-    # ENGINEER FEATURES (MUST MATCH TRAINING)
-    # ----------------------------
     mileage_per_year = mileage / (car_age + 1)
     log_mileage = np.log1p(mileage)
     is_luxury = 1 if make in luxury_brands else 0
+    brand_score = brand_score_map.get(make, 3)
 
     input_data = pd.DataFrame({
         "Make": [make],
@@ -162,7 +174,8 @@ if submit_button:
         "Car Age": [car_age],
         "Mileage_per_year": [mileage_per_year],
         "Log_Mileage": [log_mileage],
-        "Is_Luxury": [is_luxury]
+        "Is_Luxury": [is_luxury],
+        "Brand_Score": [brand_score]
     })
 
     try:
@@ -177,3 +190,12 @@ if submit_button:
 
     except Exception as e:
         st.error(f"Prediction Error: {e}")
+
+# ----------------------------
+# FOOTER
+# ----------------------------
+st.markdown("""
+<div style='text-align:center; color:rgba(255,255,255,0.6); padding-top:20px;'>
+🚘 DrivenG • AI Powered Nigerian Car Valuation
+</div>
+""", unsafe_allow_html=True)
