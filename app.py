@@ -183,7 +183,7 @@ if submit_button:
 
         st.markdown(f"""
         <div class="prediction-box">
-            🚗 Estimated Car Price <br><br>
+            Estimated Car Price <br><br>
             ₦{prediction:,.0f}
         </div>
         """, unsafe_allow_html=True)
