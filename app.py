@@ -30,7 +30,16 @@ car_brands = {
 }
 
 # ----------------------------
-# CUSTOM STYLING
+# SESSION STATE FIX (IMPORTANT)
+# ----------------------------
+if "last_make" not in st.session_state:
+    st.session_state.last_make = "Toyota"
+
+if "model_index" not in st.session_state:
+    st.session_state.model_index = 0
+
+# ----------------------------
+# STYLE
 # ----------------------------
 st.markdown(
     """
@@ -57,28 +66,19 @@ st.markdown(
         visibility: hidden;
     }
 
-    /* TITLE */
     h1 {
         text-align: center;
         font-size: 62px;
         font-weight: 900;
-
         background: linear-gradient(to right, #ffffff, #dbeafe, #93c5fd);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-
-        text-shadow: 0px 0px 20px rgba(147,197,253,0.35);
     }
 
-    /* SUBTITLE */
     h3 {
         text-align: center;
         font-size: 18px;
-        font-weight: 400;
-
-        background: linear-gradient(to right, #e2e8f0, #93c5fd);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: #cbd5e1;
     }
 
     label {
@@ -86,7 +86,6 @@ st.markdown(
         font-weight: 600 !important;
     }
 
-    /* INPUTS */
     .stSelectbox > div > div,
     .stNumberInput > div > div > input {
         background: rgba(255,255,255,0.08) !important;
@@ -95,7 +94,6 @@ st.markdown(
         border: 1px solid rgba(255,255,255,0.15) !important;
     }
 
-    /* BUTTON */
     .stButton > button {
         width: 100%;
         background: rgba(255,255,255,0.08);
@@ -103,17 +101,10 @@ st.markdown(
         border-radius: 14px;
         height: 58px;
         font-size: 19px;
-        border: 1px solid rgba(255,255,255,0.18);
         font-weight: bold;
-        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.18);
     }
 
-    .stButton > button:hover {
-        background: rgba(255,255,255,0.15);
-        transform: scale(1.02);
-    }
-
-    /* RESULT BOX */
     .prediction-box {
         padding: 30px;
         background: rgba(15, 23, 42, 0.75);
@@ -122,7 +113,6 @@ st.markdown(
         color: white;
         font-size: 34px;
         margin-top: 30px;
-        border: 1px solid rgba(255,255,255,0.1);
     }
 
     </style>
@@ -143,18 +133,23 @@ with st.form("prediction_form"):
 
     col1, col2 = st.columns(2)
 
-    # ✅ FIXED DEPENDENCY (THIS IS THE IMPORTANT PART)
-    with col1:
-        make = st.selectbox(
-            "Car Make",
-            list(car_brands.keys())
-        )
+    # MAKE
+    make = st.selectbox(
+        "Car Make",
+        list(car_brands.keys())
+    )
 
-    with col2:
-        model_name = st.selectbox(
-            "Car Model",
-            car_brands[make]   # 👈 THIS FIXES THE ISSUE
-        )
+    # RESET MODEL IF MAKE CHANGES
+    if st.session_state.last_make != make:
+        st.session_state.model_index = 0
+        st.session_state.last_make = make
+
+    # MODEL (ALWAYS REFRESHED)
+    model_name = st.selectbox(
+        "Car Model",
+        car_brands[make],
+        index=st.session_state.model_index
+    )
 
     col3, col4 = st.columns(2)
 
@@ -216,8 +211,6 @@ if submit_button:
         </div>
         """, unsafe_allow_html=True)
 
-        st.balloons()
-
     except Exception as e:
         st.error(f"Prediction Error: {e}")
 
@@ -226,13 +219,7 @@ if submit_button:
 # ----------------------------
 st.markdown(
     """
-    <div style='
-        text-align: center;
-        color: rgba(255,255,255,0.7);
-        padding-top: 25px;
-        font-size: 14px;
-        letter-spacing: 0.5px;
-    '>
+    <div style='text-align:center;color:rgba(255,255,255,0.7);padding-top:25px;font-size:14px;'>
         🚘 DrivenG • AI Powered Nigerian Car Valuation
     </div>
     """,
