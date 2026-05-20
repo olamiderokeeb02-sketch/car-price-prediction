@@ -2,7 +2,7 @@
 
 This is a machine learning web application that predicts the market price of used cars in Nigeria. Users can input car details and instantly receive an estimated price in Naira.
 
-The model is built using a Random Forest Regressor and includes SHAP (SHapley Additive exPlanations) for model explainability, helping users understand which features influence the predicted price.
+The model is built using a Xgboost and includes SHAP (SHapley Additive exPlanations) for model explainability, helping users understand which features influence the predicted price.
 
 ---
 ### Live App Link -> https://car-price-prediction-kahxpaucshaaf3rvtm3vsg.streamlit.app/
@@ -37,7 +37,7 @@ DriveValue Nigeria helps users:
 ---
 
 ## 🔑 Key findings
-- A tuned Xgboost outperforned a Linear Regression baseline, achieving an MAE of [₦919,934] , RMSE of[₦1,927,887] and an R2 of [0.706] on the held-out test set of predicted price
+- A tuned Xgboost outperforned a Linear Regression baseline, achieving an MAE of [₦923,333] , RMSE of[₦1,923,025] and an R2 of [0.708] on the held-out test set of predicted price
 - SHAP analysis identified [top feature e.g. year], [2nd feature e.g. mileage_kn], and [3rd feature e.g. brand] as the strongest drivers
 - Never cars and lover mileage consistently oushed predictions hioher, contirmind real-world intuition about the Nigerian used car market
 ---
