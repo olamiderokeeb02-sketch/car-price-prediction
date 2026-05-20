@@ -27,7 +27,10 @@ car_brands = {
     "Lexus": ["ES350", "RX350", "GX460", "LX570"],
     "Mercedes-Benz": ["C300", "E350", "GLK350", "ML350"],
     "BMW": ["X5", "3 Series", "5 Series"],
-    "Hyundai": ["Elantra", "Sonata", "Tucson"]
+    "Hyundai": ["Elantra", "Sonata", "Tucson"],
+    'Acura': ['ILX', 'MDX', 'RDX', 'RL', 'TL', 'TSX', 'ZDX'],
+    'Audi': ['A4', 'A6', 'A7', 'Q5', 'Q7'],
+    'Ford': ['E-350', 'Ecosport', 'Edge', 'Escape', 'Expedition', 'Explorer', 'F-150', 'Flex', 'Focus', 'Fusion', 'Galaxy', 'Mustang', 'Ranger', 'Sport Trac', 'Taurus']
 }
 
 all_models = sorted(set([m for models in car_brands.values() for m in models]))
@@ -43,7 +46,10 @@ brand_score_map = {
     "Lexus": 5,
     "BMW": 3,
     "Mercedes-Benz": 3,
-    "Hyundai": 4
+    "Hyundai": 4,
+    "Audi": 3,
+    "Acura": 4,
+    "Ford": 4
 }
 
 # ----------------------------
