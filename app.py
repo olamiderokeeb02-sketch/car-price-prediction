@@ -139,7 +139,7 @@ with st.form("prediction_form"):
 
     year = st.select_slider(
         "Select Car Year",
-        options=list(range(1990, current_year + 1)),
+        options=list(range(1990, current_year)),
         value=2021
     )
 
