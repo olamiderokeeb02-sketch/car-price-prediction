@@ -5,7 +5,7 @@ This is a machine learning web application that predicts the market price of use
 The model is built using a Xgboost and includes SHAP (SHapley Additive exPlanations) for model explainability, helping users understand which features influence the predicted price.
 
 ---
-### Live App Link -> https://car-price-prediction-kahxpaucshaaf3rvtm3vsg.streamlit.app/
+### Live App Link -> https://car-price-prediction-l97pkr4xp4lb4qgkycdtbr.streamlit.app/
 ---
 ---
 ## Demo Video
