@@ -152,7 +152,7 @@ with st.form("prediction_form"):
         engine_size = st.number_input("Engine Size", 0.8, 8.0, value=2.0, step=0.1)
 
     condition = st.selectbox("Condition", ["Foreign Used", "Nigerian Used"])
- submit_button = st.form_submit_button("🚀 Predict Car Price")
+    submit_button = st.form_submit_button("🚀 Predict Car Price")
 
 # ----------------------------
 # PREDICTION
