@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import joblib
+from datetime import datetime
 import numpy as np
 
 # ----------------------------
@@ -15,15 +16,10 @@ st.set_page_config(
 # ----------------------------
 # LOAD MODEL
 # ----------------------------
-model = joblib.load("car_model (1).joblib")
+model = joblib.load("car_model.joblib")
 
 # ----------------------------
-# FIXED BASE YEAR (MATCH TRAINING)
-# ----------------------------
-BASE_YEAR = 2026
-
-# ----------------------------
-# DATA
+# CAR DATA
 # ----------------------------
 car_brands = {
     "Toyota": ["Camry", "Corolla", "Highlander", "RAV4", "Avalon", "Venza"],
@@ -32,13 +28,16 @@ car_brands = {
     "Mercedes-Benz": ["C300", "E350", "GLK350", "ML350"],
     "BMW": ["X5", "3 Series", "5 Series"],
     "Hyundai": ["Elantra", "Sonata", "Tucson"],
-    "Acura": ["ILX", "MDX", "RDX", "RL", "TL", "TSX", "ZDX"],
-    "Audi": ["A4", "A6", "A7", "Q5", "Q7"],
-    "Ford": ["E-350", "Ecosport", "Edge", "Escape", "Explorer", "F-150", "Fusion", "Mustang"]
+    'Acura': ['ILX', 'MDX', 'RDX', 'RL', 'TL', 'TSX', 'ZDX'],
+    'Audi': ['A4', 'A6', 'A7', 'Q5', 'Q7'],
+    'Ford': ['E-350', 'Ecosport', 'Edge', 'Escape', 'Expedition', 'Explorer', 'F-150', 'Flex', 'Focus', 'Fusion', 'Galaxy', 'Mustang', 'Ranger', 'Sport Trac', 'Taurus']
 }
 
 all_models = sorted(set([m for models in car_brands.values() for m in models]))
 
+# ----------------------------
+# FEATURE MAPS (MUST MATCH TRAINING)
+# ----------------------------
 luxury_brands = ["Lexus", "Mercedes-Benz", "BMW"]
 
 brand_score_map = {
@@ -54,7 +53,7 @@ brand_score_map = {
 }
 
 # ----------------------------
-# STYLING (RESTORED YOUR BACKGROUND)
+# STYLING
 # ----------------------------
 st.markdown("""
 <style>
@@ -136,7 +135,13 @@ with st.form("prediction_form"):
     with col4:
         gear_type = st.selectbox("Gear Type", ["Automatic", "Manual"])
 
-    year = st.slider("Car Year", 1990, BASE_YEAR, 2021)
+    current_year = datetime.now().year
+
+    year = st.select_slider(
+        "Select Car Year",
+        options=list(range(1990, current_year)),
+        value=2021
+    )
 
     col5, col6 = st.columns(2)
 
@@ -147,21 +152,21 @@ with st.form("prediction_form"):
         engine_size = st.number_input("Engine Size", 0.8, 8.0, value=2.0, step=0.1)
 
     condition = st.selectbox("Condition", ["Foreign Used", "Nigerian Used"])
-
-    submit = st.form_submit_button("🚀 Predict Price")
+    submit_button = st.form_submit_button("🚀 Predict Car Price")
 
 # ----------------------------
 # PREDICTION
 # ----------------------------
-if submit:
+if submit_button:
 
     # ----------------------------
     # FEATURE ENGINEERING (MATCH TRAINING)
     # ----------------------------
-    car_age = BASE_YEAR - year
-    car_age = max(car_age, 1)
-
+    car_age = current_year - year
+    mileage_per_year = mileage / (car_age + 1)
     log_mileage = np.log1p(mileage)
+    is_luxury = 1 if make in luxury_brands else 0
+    brand_score = brand_score_map.get(make, 3)
 
     input_data = pd.DataFrame({
         "Make": [make],
@@ -172,9 +177,10 @@ if submit:
         "Mileage": [mileage],
         "Engine Size": [engine_size],
         "Car Age": [car_age],
+        "Mileage_per_year": [mileage_per_year],
         "Log_Mileage": [log_mileage],
-        "Is_Luxury": [1 if make in luxury_brands else 0],
-        "Brand_Score": [brand_score_map.get(make, 3)]
+        "Is_Luxury": [is_luxury],
+        "Brand_Score": [brand_score]
     })
 
     try:
@@ -188,4 +194,13 @@ if submit:
         """, unsafe_allow_html=True)
 
     except Exception as e:
-        st.error(f"Error: {e}")
+        st.error(f"Prediction Error: {e}")
+
+# ----------------------------
+# FOOTER
+# ----------------------------
+st.markdown("""
+<div style='text-align:center; color:rgba(255,255,255,0.6); padding-top:20px;'>
+🚘 DrivenG • AI Powered Nigerian Car Valuation
+</div>
+""", unsafe_allow_html=True) is this using car age or year
