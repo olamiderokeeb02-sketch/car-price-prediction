@@ -15,7 +15,7 @@ st.set_page_config(
 # ----------------------------
 # LOAD MODEL
 # ----------------------------
-model = joblib.load("car_model.joblib")
+model = joblib.load("car_model (1).joblib")
 
 # ----------------------------
 # FIXED BASE YEAR (same as training)
