@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import joblib
-from datetime import datetime
 import numpy as np
 
 # ----------------------------
@@ -19,6 +18,11 @@ st.set_page_config(
 model = joblib.load("car_model.joblib")
 
 # ----------------------------
+# FIXED TRAINING YEAR (IMPORTANT)
+# ----------------------------
+BASE_YEAR = 2026
+
+# ----------------------------
 # CAR DATA
 # ----------------------------
 car_brands = {
@@ -28,15 +32,15 @@ car_brands = {
     "Mercedes-Benz": ["C300", "E350", "GLK350", "ML350"],
     "BMW": ["X5", "3 Series", "5 Series"],
     "Hyundai": ["Elantra", "Sonata", "Tucson"],
-    'Acura': ['ILX', 'MDX', 'RDX', 'RL', 'TL', 'TSX', 'ZDX'],
-    'Audi': ['A4', 'A6', 'A7', 'Q5', 'Q7'],
-    'Ford': ['E-350', 'Ecosport', 'Edge', 'Escape', 'Expedition', 'Explorer', 'F-150', 'Flex', 'Focus', 'Fusion', 'Galaxy', 'Mustang', 'Ranger', 'Sport Trac', 'Taurus']
+    "Acura": ["ILX", "MDX", "RDX", "RL", "TL", "TSX", "ZDX"],
+    "Audi": ["A4", "A6", "A7", "Q5", "Q7"],
+    "Ford": ["E-350", "Ecosport", "Edge", "Escape", "Explorer", "F-150", "Fusion", "Mustang"]
 }
 
 all_models = sorted(set([m for models in car_brands.values() for m in models]))
 
 # ----------------------------
-# FEATURE MAPS (MUST MATCH TRAINING)
+# FEATURE MAPS
 # ----------------------------
 luxury_brands = ["Lexus", "Mercedes-Benz", "BMW"]
 
@@ -57,7 +61,6 @@ brand_score_map = {
 # ----------------------------
 st.markdown("""
 <style>
-
 .stApp {
     background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
     url("https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2070&auto=format&fit=crop");
@@ -104,7 +107,6 @@ label { color: white !important; font-weight: 600 !important; }
     font-size: 34px;
     margin-top: 30px;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -135,11 +137,9 @@ with st.form("prediction_form"):
     with col4:
         gear_type = st.selectbox("Gear Type", ["Automatic", "Manual"])
 
-    current_year = datetime.now().year
-
     year = st.select_slider(
         "Select Car Year",
-        options=list(range(1990, current_year)),
+        options=list(range(1990, BASE_YEAR + 1)),
         value=2021
     )
 
@@ -152,6 +152,7 @@ with st.form("prediction_form"):
         engine_size = st.number_input("Engine Size", 0.8, 8.0, value=2.0, step=0.1)
 
     condition = st.selectbox("Condition", ["Foreign Used", "Nigerian Used"])
+
     submit_button = st.form_submit_button("🚀 Predict Car Price")
 
 # ----------------------------
@@ -160,10 +161,12 @@ with st.form("prediction_form"):
 if submit_button:
 
     # ----------------------------
-    # FEATURE ENGINEERING (MATCH TRAINING)
+    # FEATURE ENGINEERING (MATCH TRAINING EXACTLY)
     # ----------------------------
-    car_age = current_year - year
-    mileage_per_year = mileage / (car_age + 1)
+    car_age = BASE_YEAR - year
+    car_age = max(car_age, 1)  # safety
+
+    mileage_per_year = mileage / car_age
     log_mileage = np.log1p(mileage)
     is_luxury = 1 if make in luxury_brands else 0
     brand_score = brand_score_map.get(make, 3)
