@@ -16,7 +16,7 @@ st.set_page_config(
 # ----------------------------
 # LOAD MODEL
 # ----------------------------
-model = joblib.load("car_model.joblib")
+model = joblib.load("car_model (2).joblib")
 
 # ----------------------------
 # CAR DATA
