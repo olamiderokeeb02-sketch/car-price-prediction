@@ -16,7 +16,7 @@ st.set_page_config(
 # ----------------------------
 # LOAD MODEL
 # ----------------------------
-model = joblib.load("car_model (2).joblib")
+model = joblib.load("car_model.joblib")
 
 # ----------------------------
 # CAR DATA
@@ -93,10 +93,7 @@ h1 {
     -webkit-text-fill-color: transparent;
 }
 
-label {
-    color: white !important;
-    font-weight: 600 !important;
-}
+label { color: white !important; font-weight: 600 !important; }
 
 .prediction-box {
     padding: 30px;
@@ -115,11 +112,7 @@ label {
 # HEADER
 # ----------------------------
 st.markdown("<h1>🚘 DriveValuenG</h1>", unsafe_allow_html=True)
-
-st.markdown(
-    '<div class="subtitle">Smart Nigerian Car Price Prediction System</div>',
-    unsafe_allow_html=True
-)
+st.markdown('<div class="subtitle">Smart Nigerian Car Price Prediction System</div>', unsafe_allow_html=True)
 
 # ----------------------------
 # FORM
@@ -137,59 +130,38 @@ with st.form("prediction_form"):
     col3, col4 = st.columns(2)
 
     with col3:
-        fuel_type = st.selectbox(
-            "Fuel Type",
-            ["Petrol", "Diesel", "Hybrid"]
-        )
+        fuel_type = st.selectbox("Fuel Type", ["Petrol", "Diesel", "Hybrid"])
 
     with col4:
-        gear_type = st.selectbox(
-            "Gear Type",
-            ["Automatic", "Manual"]
-        )
+        gear_type = st.selectbox("Gear Type", ["Automatic", "Manual"])
 
     current_year = datetime.now().year
 
     year = st.select_slider(
         "Select Car Year",
-        options=list(range(1990, current_year + 1)),
+        options=list(range(1990, current_year)),
         value=2021
     )
 
     col5, col6 = st.columns(2)
 
     with col5:
-        mileage = st.number_input(
-            "Mileage",
-            0,
-            value=50000,
-            step=1000
-        )
+        mileage = st.number_input("Mileage", 0, value=50000, step=1000)
 
     with col6:
-        engine_size = st.number_input(
-            "Engine Size",
-            0.8,
-            8.0,
-            value=2.0,
-            step=0.1
-        )
+        engine_size = st.number_input("Engine Size", 0.8, 8.0, value=2.0, step=0.1)
 
-    condition = st.selectbox(
-        "Condition",
-        ["Foreign Used", "Nigerian Used"]
-    )
-
-    submit_button = st.form_submit_button(
-        "🚀 Predict Car Price"
-    )
+    condition = st.selectbox("Condition", ["Foreign Used", "Nigerian Used"])
+    submit_button = st.form_submit_button("🚀 Predict Car Price")
 
 # ----------------------------
 # PREDICTION
 # ----------------------------
 if submit_button:
 
-    # FEATURE ENGINEERING
+    # ----------------------------
+    # FEATURE ENGINEERING (MATCH TRAINING)
+    # ----------------------------
     car_age = current_year - year
     mileage_per_year = mileage / (car_age + 1)
     log_mileage = np.log1p(mileage)
@@ -212,11 +184,7 @@ if submit_button:
     })
 
     try:
-        # PREDICT
         prediction = model.predict(input_data)[0]
-
-        # REVERSE LOG TRANSFORM
-        prediction = np.expm1(prediction)
 
         st.markdown(f"""
         <div class="prediction-box">
@@ -232,9 +200,7 @@ if submit_button:
 # FOOTER
 # ----------------------------
 st.markdown("""
-<div style='text-align:center;
-            color:rgba(255,255,255,0.6);
-            padding-top:20px;'>
+<div style='text-align:center; color:rgba(255,255,255,0.6); padding-top:20px;'>
 🚘 DrivenG • AI Powered Nigerian Car Valuation
 </div>
 """, unsafe_allow_html=True)
