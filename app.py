@@ -175,7 +175,7 @@ with st.form("prediction_form"):
     # ----------------------------
     car_age = st.select_slider(
         "Select Car Age",
-        options=list(range(0, 36)),
+        options=list(range(1, 25)),
         value=3
     )
 
