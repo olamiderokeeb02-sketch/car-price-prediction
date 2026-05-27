@@ -34,6 +34,16 @@ car_brands = {
 }
 
 # ----------------------------
+# ALL MODELS
+# ----------------------------
+all_models = sorted(set([m for models in car_brands.values() for m in models]))
+
+# Make ES350 first
+if "ES350" in all_models:
+    all_models.remove("ES350")
+    all_models.insert(0, "ES350")
+
+# ----------------------------
 # FEATURE MAPS
 # ----------------------------
 luxury_brands = ["Lexus", "Mercedes-Benz", "BMW"]
@@ -113,6 +123,7 @@ label {
 # HEADER
 # ----------------------------
 st.markdown("<h1>🚘 DriveValuenG</h1>", unsafe_allow_html=True)
+
 st.markdown(
     '<div class="subtitle">Smart Nigerian Car Price Prediction System</div>',
     unsafe_allow_html=True
@@ -126,18 +137,38 @@ with st.form("prediction_form"):
     col1, col2 = st.columns(2)
 
     with col1:
-        make = st.selectbox("Car Make", list(car_brands.keys()))
+        make_options = list(car_brands.keys())
+
+        # Make Lexus appear first
+        make_options.remove("Lexus")
+        make_options.insert(0, "Lexus")
+
+        make = st.selectbox(
+            "Car Make",
+            make_options,
+            index=0
+        )
 
     with col2:
-        model_name = st.selectbox("Car Model", car_brands[make])
+        model_name = st.selectbox(
+            "Car Model",
+            all_models,
+            index=0
+        )
 
     col3, col4 = st.columns(2)
 
     with col3:
-        fuel_type = st.selectbox("Fuel Type", ["Petrol", "Diesel", "Hybrid"])
+        fuel_type = st.selectbox(
+            "Fuel Type",
+            ["Petrol", "Diesel", "Hybrid"]
+        )
 
     with col4:
-        gear_type = st.selectbox("Gear Type", ["Automatic", "Manual"])
+        gear_type = st.selectbox(
+            "Gear Type",
+            ["Automatic", "Manual"]
+        )
 
     # ----------------------------
     # CAR AGE INPUT
