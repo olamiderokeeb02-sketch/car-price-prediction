@@ -16,7 +16,7 @@ st.set_page_config(
 # ----------------------------
 # LOAD MODEL
 # ----------------------------
-model = joblib.load("car_model (3).joblib")
+model = joblib.load("car_model.joblib")
 
 # ----------------------------
 # CAR DATA
@@ -47,18 +47,6 @@ if "ES350" in all_models:
 # FEATURE MAPS
 # ----------------------------
 luxury_brands = ["Lexus", "Mercedes-Benz", "BMW"]
-
-brand_score_map = {
-    "Toyota": 5,
-    "Honda": 5,
-    "Lexus": 5,
-    "BMW": 3,
-    "Mercedes-Benz": 3,
-    "Hyundai": 4,
-    "Audi": 3,
-    "Acura": 4,
-    "Ford": 4
-}
 
 # ----------------------------
 # STYLING
@@ -214,9 +202,7 @@ if submit_button:
     # FEATURE ENGINEERING
     # ----------------------------
     mileage_per_year = mileage / (car_age + 1)
-    log_mileage = np.log1p(mileage)
     is_luxury = 1 if make in luxury_brands else 0
-    brand_score = brand_score_map.get(make, 3)
 
     input_data = pd.DataFrame({
         "Make": [make],
@@ -228,9 +214,7 @@ if submit_button:
         "Engine Size": [engine_size],
         "Car Age": [car_age],
         "Mileage_per_year": [mileage_per_year],
-        "Log_Mileage": [log_mileage],
         "Is_Luxury": [is_luxury],
-        "Brand_Score": [brand_score]
     })
 
     try:
