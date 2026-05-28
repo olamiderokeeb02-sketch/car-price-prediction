@@ -48,6 +48,18 @@ if "ES350" in all_models:
 # ----------------------------
 luxury_brands = ["Lexus", "Mercedes-Benz", "BMW"]
 
+brand_score_map = {
+    "Toyota": 5,
+    "Honda": 5,
+    "Lexus": 5,
+    "BMW": 3,
+    "Mercedes-Benz": 3,
+    "Hyundai": 4,
+    "Audi": 3,
+    "Acura": 4,
+    "Ford": 4
+}
+
 # ----------------------------
 # STYLING
 # ----------------------------
@@ -151,8 +163,7 @@ with st.form("prediction_form"):
             "Fuel Type",
             ["Petrol", "Diesel", "Hybrid"]
         )
-
-    with col4:
+        
         gear_type = st.selectbox(
             "Gear Type",
             ["Automatic", "Manual"]
@@ -203,6 +214,7 @@ if submit_button:
     # ----------------------------
     mileage_per_year = mileage / (car_age + 1)
     is_luxury = 1 if make in luxury_brands else 0
+    brand_score = brand_score_map.get(make, 3)
 
     input_data = pd.DataFrame({
         "Make": [make],
@@ -215,6 +227,7 @@ if submit_button:
         "Car Age": [car_age],
         "Mileage_per_year": [mileage_per_year],
         "Is_Luxury": [is_luxury],
+        "Brand_Score": [brand_score]
     })
 
     try:
