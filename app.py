@@ -164,6 +164,7 @@ with st.form("prediction_form"):
             ["Petrol", "Diesel", "Hybrid"]
         )
         
+    with col4:
         gear_type = st.selectbox(
             "Gear Type",
             ["Automatic", "Manual"]
