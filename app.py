@@ -174,7 +174,7 @@ with st.form("prediction_form"):
     # CAR AGE INPUT
     # ----------------------------
     car_age = st.select_slider(
-        "Select Car Age",
+        "Select Car Age (in years)",
         options=list(range(1, 25)),
         value=3
     )
@@ -183,7 +183,7 @@ with st.form("prediction_form"):
 
     with col5:
         mileage = st.number_input(
-            "Mileage",
+            "Mileage (km)",
             min_value=0,
             value=50000,
             step=1000
