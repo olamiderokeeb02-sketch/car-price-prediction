@@ -9,6 +9,7 @@ The model is built using a Xgboost and includes SHAP (SHapley Additive exPlanati
 ---
 ---
 ## Demo Video
+[![Watch the Demo](https://img.youtube.com/vi/e-yH5AR_LS8/maxresdefault.jpg)](https://youtu.be/e-yH5AR_LS8)
 
 ---
 ## 📌 Project Overview
