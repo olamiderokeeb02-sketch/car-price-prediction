@@ -39,7 +39,7 @@ DriveValue Nigeria helps users:
 ---
 
 ## 🔑 Key findings
-- A tuned Xgboost outperforned a Linear Regression baseline, achieving an MAE of [₦875,880] , RMSE of[₦1,529,205] and an R2 of [0.818] on the held-out test set of predicted price
+- A tuned Xgboost outperforned a Linear Regression baseline, achieving an MAE of [₦870,088] , RMSE of[₦1,545,766] and an R2 of [0.814] on the held-out test set of predicted price
 - SHAP analysis identified [top feature e.g. year], [2nd feature e.g. mileage_kn], and [3rd feature e.g. brand] as the strongest drivers
 - Never cars and lover mileage consistently oushed predictions hioher, contirmind real-world intuition about the Nigerian used car market
 ---
